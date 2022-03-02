@@ -16,5 +16,10 @@ module.exports = {
 		// printWidth rule in prettier is not working
 		'max-len': ['error', { code: 120, tabWidth: 2 }],
 		'import/extensions': ['error', 'always'],
+		'no-underscore-dangle': ['error', { allow: ['__MIAAM__'] }],
+	},
+
+	globals: {
+		__webpack_require__: 'readonly',
 	},
 };

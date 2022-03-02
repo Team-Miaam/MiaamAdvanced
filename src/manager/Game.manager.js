@@ -24,9 +24,10 @@ class GameManager {
 	 * @constructor
 	 */
 	constructor() {
-		if (!this.lock) {
+		this.#resolveGlobals();
+		if (!this.index) {
 			throw new IntegrationError(
-				'Cannot instantiate game manager without miaam-lock file. Please set the lock file first'
+				'Cannot instantiate game manager without miaam-lock file. Please load the lock file first'
 			);
 		}
 	}
@@ -41,15 +42,20 @@ class GameManager {
 		return this.#instance;
 	}
 
-	static set index(index) {
-		this.index = index;
-	}
-
 	/**
 	 * @param {Object} options
 	 */
-	createWindow = (options) => {
+	createApplication = (options) => {
 		this.#app = new Application(options);
+	};
+
+	#resolveGlobals = () => {
+		window.__MIAAM__ = {
+			...window.__MIAAM__,
+			UNDEFINED: undefined,
+		};
+
+		this.index = window.__MIAAM__.LOCK;
 	};
 
 	/**
@@ -67,8 +73,5 @@ class GameManager {
 export default {
 	get instance() {
 		return GameManager.instance;
-	},
-	get index() {
-		return GameManager.index;
 	},
 };

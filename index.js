@@ -1,4 +1,3 @@
-import AssetsManager from './src/manager/Assets.manager.js';
-import GameManager from './src/manager/Game.manager.js';
+import { AssetsManager, GameManager } from './src/manager/index.js';
 
 export { GameManager, AssetsManager };

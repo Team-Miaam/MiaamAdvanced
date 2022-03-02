@@ -1,6 +1,7 @@
-/* eslint-disable class-methods-use-this */
-
+import { Loader } from 'pixi.js';
+import IllegalArgumentError from '../error/IllegalArgument.error.js';
 import GameManager from './Game.manager.js';
+// import IntegrationError from '../error/Integration.error.js';
 
 /**
  * @public
@@ -24,9 +25,12 @@ class AssetsManager {
 	 * @constructor
 	 */
 	constructor() {
-		this.#loader = GameManager.instance.app.loader;
+		// if (!GameManager.instance.app) {
+		// 	throw new IntegrationError('Cannot start resource manager before creating application');
+		// }
 		const { assets, chunks } = GameManager.instance.index;
 		this.index = { assets, chunks };
+		this.#loader = new Loader();
 	}
 
 	/**
@@ -39,9 +43,73 @@ class AssetsManager {
 		return this.#instance;
 	}
 
-	importChunk = (chunkName) => {};
+	importChunk = async ({ source, onProgress }) => {
+		const chunkName = source.substring(1).replaceAll(/[/\\.]/gm, '_');
+		try {
+			await this.importChunkAssets({ chunkName, onProgress });
+			console.log(this.#loader);
+			const module = await __webpack_require__
+				.e(chunkName)
+				.then(__webpack_require__.bind(__webpack_require__, `.${source}`));
+			return module;
+		} catch (errors) {
+			if (errors.length) {
+				errors.forEach((error) => console.error(error));
+			} else {
+				console.error(errors);
+			}
+			return undefined;
+		}
+	};
 
-	importChunkAssets = async (chunkName) => {};
+	importChunkAssets = async ({ chunkName, onProgress }) => {
+		const dependencies = this.#resolveChunkDependencies(chunkName);
+		dependencies.forEach((dependency) => this.#loader.add(dependency, dependency));
+		this.#loader.onProgress.add((_loader, resource) => onProgress(this.#loader.progress, resource));
+
+		const assetsPromise = new Promise((resolve, reject) => {
+			const errors = [];
+			this.#loader.onComplete.add(() => {
+				if (errors.length) {
+					this.#loader.reset();
+					reject(errors);
+					return;
+				}
+				resolve();
+			});
+			this.#loader.onError.add((_error, _loader, resource) => {
+				errors.push(`Cannot load ${resource.name}`);
+			});
+			this.#loader.load();
+		});
+		return assetsPromise;
+	};
+
+	#resolveChunkDependencies = (chunkName) => {
+		const dependencies = new Set();
+		const visited = {};
+		const chunkDependencies = this.index.chunks[chunkName];
+		if (!chunkDependencies) {
+			throw new IllegalArgumentError('Requested chunk cannot be found');
+		}
+		chunkDependencies.forEach((chunkDependency) => {
+			if (visited[chunkDependency]) return;
+
+			const resolveAssetDependency = (file) => {
+				visited[file] = true;
+				const fileDependencies = this.index.assets[file];
+				if (fileDependencies) {
+					fileDependencies.forEach(
+						(fileDependency) => !visited[fileDependency] && resolveAssetDependency(fileDependency)
+					);
+				}
+				dependencies.add(file);
+			};
+			resolveAssetDependency(chunkDependency);
+		});
+
+		return [...dependencies];
+	};
 }
 
 export default {
