@@ -20,6 +20,10 @@ class AssetsManager {
 
 	index;
 
+	#chunkDependencyMemo;
+
+	#middlewares;
+
 	/**
 	 * @private
 	 * @constructor
@@ -31,6 +35,8 @@ class AssetsManager {
 		const { assets, chunks } = GameManager.instance.index;
 		this.index = { assets, chunks };
 		this.#loader = new Loader();
+		this.#chunkDependencyMemo = {};
+		this.#middlewares = [];
 	}
 
 	/**
@@ -42,6 +48,8 @@ class AssetsManager {
 		}
 		return this.#instance;
 	}
+
+	// Dynamic Import
 
 	importChunk = async ({ source, onProgress }) => {
 		const chunkName = source.substring(1).replaceAll(/[/\\.]/gm, '_');
@@ -64,7 +72,9 @@ class AssetsManager {
 
 	importChunkAssets = async ({ chunkName, onProgress }) => {
 		const dependencies = this.#resolveChunkDependencies(chunkName);
-		dependencies.forEach((dependency) => this.#loader.add(dependency, dependency));
+		dependencies.forEach(
+			(dependency) => !this.#loader.resources[dependency] && this.#loader.add(dependency, dependency)
+		);
 		this.#loader.onProgress.add((_loader, resource) => onProgress(this.#loader.progress, resource));
 
 		const assetsPromise = new Promise((resolve, reject) => {
@@ -86,6 +96,10 @@ class AssetsManager {
 	};
 
 	#resolveChunkDependencies = (chunkName) => {
+		if (this.#chunkDependencyMemo[chunkName]) {
+			return this.#chunkDependencyMemo[chunkName];
+		}
+
 		const dependencies = new Set();
 		const visited = {};
 		const chunkDependencies = this.index.chunks[chunkName];
@@ -108,7 +122,14 @@ class AssetsManager {
 			resolveAssetDependency(chunkDependency);
 		});
 
-		return [...dependencies];
+		this.#chunkDependencyMemo[chunkName] = [...dependencies];
+		return this.#chunkDependencyMemo[chunkName];
+	};
+
+	getResource = (resourcePath) => this.#loader.resources[resourcePath];
+
+	use = (middleware) => {
+		this.#middlewares.push(middleware);
 	};
 }
 
