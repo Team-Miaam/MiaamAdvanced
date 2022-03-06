@@ -22,6 +22,8 @@ class AssetsManager {
 
 	#chunkDependencyMemo;
 
+	#middlewares;
+
 	/**
 	 * @private
 	 * @constructor
@@ -34,6 +36,7 @@ class AssetsManager {
 		this.index = { assets, chunks };
 		this.#loader = new Loader();
 		this.#chunkDependencyMemo = {};
+		this.#middlewares = [];
 	}
 
 	/**
@@ -45,6 +48,8 @@ class AssetsManager {
 		}
 		return this.#instance;
 	}
+
+	// Dynamic Import
 
 	importChunk = async ({ source, onProgress }) => {
 		const chunkName = source.substring(1).replaceAll(/[/\\.]/gm, '_');
@@ -122,6 +127,10 @@ class AssetsManager {
 	};
 
 	getResource = (resourcePath) => this.#loader.resources[resourcePath];
+
+	use = (middleware) => {
+		this.#middlewares.push(middleware);
+	};
 }
 
 export default {
