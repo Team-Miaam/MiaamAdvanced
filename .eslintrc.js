@@ -18,8 +18,4 @@ module.exports = {
 		'import/extensions': ['error', 'always'],
 		'no-underscore-dangle': ['error', { allow: ['__MIAAM__'] }],
 	},
-
-	globals: {
-		__webpack_require__: 'readonly',
-	},
 };

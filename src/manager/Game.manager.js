@@ -50,11 +50,6 @@ class GameManager {
 	};
 
 	#resolveGlobals = () => {
-		window.__MIAAM__ = {
-			...window.__MIAAM__,
-			UNDEFINED: undefined,
-		};
-
 		this.index = window.__MIAAM__.LOCK;
 	};
 

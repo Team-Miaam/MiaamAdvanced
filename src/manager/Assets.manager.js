@@ -1,7 +1,6 @@
 import { Loader } from 'pixi.js';
 import IllegalArgumentError from '../error/IllegalArgument.error.js';
 import GameManager from './Game.manager.js';
-// import IntegrationError from '../error/Integration.error.js';
 
 /**
  * @public
@@ -13,14 +12,11 @@ class AssetsManager {
 	 */
 	static #instance;
 
-	/**
-	 * @private
-	 */
-	#loader;
-
 	index;
 
 	#chunkDependencyMemo;
+
+	#loader;
 
 	#middlewares;
 
@@ -29,13 +25,10 @@ class AssetsManager {
 	 * @constructor
 	 */
 	constructor() {
-		// if (!GameManager.instance.app) {
-		// 	throw new IntegrationError('Cannot start resource manager before creating application');
-		// }
 		const { assets, chunks } = GameManager.instance.index;
 		this.index = { assets, chunks };
-		this.#loader = new Loader();
 		this.#chunkDependencyMemo = {};
+		this.#loader = new Loader();
 		this.#middlewares = [];
 	}
 
@@ -49,21 +42,18 @@ class AssetsManager {
 		return this.#instance;
 	}
 
-	// Dynamic Import
-
-	importChunk = async ({ source, onProgress }) => {
-		const chunkName = source.substring(1).replaceAll(/[/\\.]/gm, '_');
+	importChunk = async ({ chunk, onProgress }) => {
+		const chunkName = chunk.source.substring(1).replaceAll(/[/\\.]/gm, '_');
 		try {
 			await this.importChunkAssets({ chunkName, onProgress });
-			console.log(this.#loader);
-			const module = await __webpack_require__
-				.e(chunkName)
-				.then(__webpack_require__.bind(__webpack_require__, `.${source}`));
+			const module = await chunk.load();
 			return module;
 		} catch (errors) {
 			if (errors.length) {
+				// eslint-disable-next-line no-console
 				errors.forEach((error) => console.error(error));
 			} else {
+				// eslint-disable-next-line no-console
 				console.error(errors);
 			}
 			return undefined;
@@ -75,11 +65,14 @@ class AssetsManager {
 		dependencies.forEach(
 			(dependency) => !this.#loader.resources[dependency] && this.#loader.add(dependency, dependency)
 		);
-		this.#loader.onProgress.add((_loader, resource) => onProgress(this.#loader.progress, resource));
+		this.#loader.onProgress.add((_loader, resource) => {
+			onProgress(this.#loader.progress, resource);
+		});
 
 		const assetsPromise = new Promise((resolve, reject) => {
 			const errors = [];
 			this.#loader.onComplete.add(() => {
+				this.#detachLoaderListener();
 				if (errors.length) {
 					this.#loader.reset();
 					reject(errors);
@@ -130,6 +123,14 @@ class AssetsManager {
 
 	use = (middleware) => {
 		this.#middlewares.push(middleware);
+	};
+
+	/* ================================ UTILITIES ================================ */
+
+	#detachLoaderListener = () => {
+		this.#loader.onProgress.detachAll();
+		this.#loader.onComplete.detachAll();
+		this.#loader.onError.detachAll();
 	};
 }
 
