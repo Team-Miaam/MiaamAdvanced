@@ -1,6 +1,9 @@
 import { Loader } from 'pixi.js';
-import IllegalArgumentError from '../error/IllegalArgument.error.js';
+import TilemapLoader from 'miaam-assets/loaders/runtime/tilemap';
+import TilesetLoader from 'miaam-assets/loaders/runtime/tileset';
+
 import GameManager from './Game.manager.js';
+import IllegalArgumentError from '../error/IllegalArgument.error.js';
 
 /**
  * @public
@@ -30,6 +33,8 @@ class AssetsManager {
 		this.#chunkDependencyMemo = {};
 		this.#loader = new Loader();
 		this.#middlewares = [];
+
+		this.#getDefaultMiddlewares().forEach((middleware) => this.use(middleware));
 	}
 
 	/**
@@ -39,11 +44,13 @@ class AssetsManager {
 		if (!this.#instance) {
 			this.#instance = new AssetsManager();
 		}
+
 		return this.#instance;
 	}
 
 	importChunk = async ({ chunk, onProgress }) => {
 		const chunkName = chunk.source.substring(1).replaceAll(/[/\\.]/gm, '_');
+
 		try {
 			await this.importChunkAssets({ chunkName, onProgress });
 			const module = await chunk.load();
@@ -56,15 +63,19 @@ class AssetsManager {
 				// eslint-disable-next-line no-console
 				console.error(errors);
 			}
+
 			return undefined;
 		}
 	};
 
 	importChunkAssets = async ({ chunkName, onProgress }) => {
 		const dependencies = this.#resolveChunkDependencies(chunkName);
-		dependencies.forEach(
+
+		const newDependencies = dependencies.filter((dependency) => !this.#loader.resources[dependency]);
+		newDependencies.forEach(
 			(dependency) => !this.#loader.resources[dependency] && this.#loader.add(dependency, dependency)
 		);
+
 		this.#loader.onProgress.add((_loader, resource) => {
 			onProgress(this.#loader.progress, resource);
 		});
@@ -78,13 +89,22 @@ class AssetsManager {
 					reject(errors);
 					return;
 				}
+
+				newDependencies.forEach((dependency) => {
+					const resource = this.#loader.resources[dependency];
+					this.#middlewares.forEach((middleware) => middleware.use(resource, () => {}));
+				});
+
 				resolve();
 			});
+
 			this.#loader.onError.add((_error, _loader, resource) => {
 				errors.push(`Cannot load ${resource.name}`);
 			});
+
 			this.#loader.load();
 		});
+
 		return assetsPromise;
 	};
 
@@ -99,6 +119,7 @@ class AssetsManager {
 		if (!chunkDependencies) {
 			throw new IllegalArgumentError('Requested chunk cannot be found');
 		}
+
 		chunkDependencies.forEach((chunkDependency) => {
 			if (visited[chunkDependency]) return;
 
@@ -112,6 +133,7 @@ class AssetsManager {
 				}
 				dependencies.add(file);
 			};
+
 			resolveAssetDependency(chunkDependency);
 		});
 
@@ -121,8 +143,13 @@ class AssetsManager {
 
 	getResource = (resourcePath) => this.#loader.resources[resourcePath];
 
-	use = (middleware) => {
-		this.#middlewares.push(middleware);
+	use = (loaderPlugin) => {
+		loaderPlugin.add(this.#loader);
+		this.#middlewares.push(loaderPlugin);
+	};
+
+	detachAllMiddlewares = () => {
+		this.#middlewares = [];
 	};
 
 	/* ================================ UTILITIES ================================ */
@@ -132,6 +159,8 @@ class AssetsManager {
 		this.#loader.onComplete.detachAll();
 		this.#loader.onError.detachAll();
 	};
+
+	#getDefaultMiddlewares = () => [new TilemapLoader({}), new TilesetLoader({})];
 }
 
 export default {
