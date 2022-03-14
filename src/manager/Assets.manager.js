@@ -68,7 +68,7 @@ class AssetsManager {
 		}
 	};
 
-	importChunkAssets = async ({ chunkName, onProgress }) => {
+	importChunkAssets = async ({ chunkName, onProgress = () => {} }) => {
 		const dependencies = this.#resolveChunkDependencies(chunkName);
 
 		const newDependencies = dependencies.filter((dependency) => !this.#loader.resources[dependency]);
@@ -142,6 +142,8 @@ class AssetsManager {
 	};
 
 	getResource = (resourcePath) => this.#loader.resources[resourcePath];
+
+	getResourceData = (resourcePath) => this.getResource(resourcePath).data;
 
 	use = (loaderPlugin) => {
 		loaderPlugin.add(this.#loader);

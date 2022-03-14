@@ -49,6 +49,7 @@
 	},
 	"dependencies": {
 		"miaam-assets": "^0.2.9",
+		"miaam-ecs": "^2.0.2",
 		"pixi.js": "^6.2.2"
 	}
 }
