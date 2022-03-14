@@ -20,6 +20,11 @@ class GameManager {
 	index;
 
 	/**
+	 * @type integer
+	 */
+	currentTime;
+
+	/**
 	 * @private
 	 * @constructor
 	 */
