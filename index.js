@@ -1,4 +1,4 @@
-import AssetsManager from './src/manager/Assets.manager.js';
-import GameManager from './src/manager/Game.manager.js';
+import * as ECS from 'miaam-ecs';
+import { AssetsManager, GameManager } from './src/manager/index.js';
 
-export { GameManager, AssetsManager };
+export { GameManager, AssetsManager, ECS };
