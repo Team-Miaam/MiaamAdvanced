@@ -23,8 +23,9 @@ class InvokeSystem extends System {
 		this.#callbacks.push(callback);
 	};
 
-    call = () => {
-                
-    }
-
+	call = () => {
+		this.#callbacks.forEach((item) => {
+			item();
+		});
+	};
 }
