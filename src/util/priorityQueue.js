@@ -14,7 +14,6 @@ class Heap {
 
 	/**
 	 * Insert element
-	 * @runtime O(log n)
 	 * @param {any} value
 	 */
 	add(value) {
@@ -24,7 +23,6 @@ class Heap {
 
 	/**
 	 * Retrieves, but does not remove, the head of this heap
-	 * @runtime O(1)
 	 */
 	peek() {
 		return this.array[0];
@@ -32,7 +30,6 @@ class Heap {
 
 	/**
 	 * Retrieves and removes the head of this heap, or returns null if this heap is empty.
-	 * @runtime O(log n)
 	 */
 	remove(index = 0) {
 		if (!this.size) return null;
@@ -44,7 +41,6 @@ class Heap {
 
 	/**
 	 * Returns the number of elements in this collection.
-	 * @runtime O(1)
 	 */
 	get size() {
 		return this.array.length;
@@ -52,7 +48,6 @@ class Heap {
 
 	/**
 	 * Move new element upwards on the heap, if it's out of order
-	 * @runtime O(log n)
 	 */
 	bubbleUp() {
 		let index = this.size - 1;
@@ -65,7 +60,6 @@ class Heap {
 
 	/**
 	 * After removal, moves element downwards on the heap, if it's out of order
-	 * @runtime O(log n)
 	 */
 	bubbleDown(index = 0) {
 		let curr = index;
@@ -82,7 +76,6 @@ class Heap {
 
 	/**
 	 * Swap elements on the heap
-	 * @runtime O(1)
 	 * @param {number} i1 index 1
 	 * @param {number} i2 index 2
 	 */

@@ -5,7 +5,7 @@ class InvokeSystem extends System {
 
 	constructor() {
 		super();
-
+		this.startTime = this.d.getTime();
 		this.#callbacks = [];
 	}
 
@@ -19,13 +19,22 @@ class InvokeSystem extends System {
 
 	destroy() {}
 
-	registerCallback = ({ callback }) => {
-		this.#callbacks.push(callback);
+	registerCallback = ({ callback, time }) => {
+		this.#callbacks.push({ callback, time });
 	};
 
+	d = new Date();
+
+	startTime;
+
+	currentTime;
+
 	call = () => {
+		this.currentTime = this.d.gettime();
 		this.#callbacks.forEach((item) => {
-			item();
+			if (this.startTime - this.currentTime >= item.time) item.callback();
 		});
 	};
 }
+
+export default InvokeSystem;
