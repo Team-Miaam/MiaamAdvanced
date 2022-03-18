@@ -1,6 +1,6 @@
 import { System } from 'miaam-ecs';
 
-class InvokeSystem extends System {
+class TimeManagement extends System {
 	#callbacks;
 
 	constructor() {
@@ -37,4 +37,4 @@ class InvokeSystem extends System {
 	};
 }
 
-export default InvokeSystem;
+export default TimeManagement;

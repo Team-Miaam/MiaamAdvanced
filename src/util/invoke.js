@@ -1,6 +1,6 @@
-import InvokeSystem from '../system/Invoke.system.js';
+import TimeManagement from '../system/TimeManagement.system.js';
 
 const invoke = ({ callback, time }) => {
-	InvokeSystem.registerCallback({ callback, time });
+	TimeManagement.registerCallback({ callback, time });
 };
 export default invoke;
