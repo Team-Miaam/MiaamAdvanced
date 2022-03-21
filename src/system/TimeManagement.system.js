@@ -6,36 +6,36 @@ class TimeManagement extends System {
 
 	constructor() {
 		super();
-		this.startTime = this.d.getTime();
 		this.#callbacks = new PriorityQueue((a, b) => a.time < b.time);
 	}
 
-	init() {}
+	init() {
+		this.#startTime = Date.now();
+	}
 
+	// eslint-disable-next-line class-methods-use-this
 	beforeUpdate() {}
 
+	// eslint-disable-next-line class-methods-use-this
 	update() {}
 
+	// eslint-disable-next-line class-methods-use-this
 	afterUpdate() {}
 
+	// eslint-disable-next-line class-methods-use-this
 	destroy() {}
 
 	registerCallback = ({ callback, time }) => {
 		this.#callbacks.push({ callback, time });
 	};
 
-	// FIXME
-	d = new Date();
-
-	startTime;
-
-	currentTime;
+	#startTime;
 
 	call = () => {
-		this.currentTime = this.d.gettime();
+		const currentTime = Date.now();
 		while (this.#callbacks.size > 0) {
 			const item = this.#callbacks.top;
-			if (!(this.startTime - this.currentTime >= item.time)) {
+			if (!(this.#startTime - currentTime >= item.time)) {
 				break;
 			}
 
