@@ -1,5 +1,9 @@
 /* eslint-disable no-bitwise */
 
+/**
+ * Courtesy: https://stackoverflow.com/a/42919752/10901858
+ */
+
 const top = 0;
 const parent = (i) => ((i + 1) >>> 1) - 1;
 const left = (i) => (i << 1) + 1;
