@@ -1,92 +1,85 @@
-class Heap {
-	constructor(comparator = (a, b) => a.time - b.time) {
-		this.array = [];
-		this.comparator = (i1, i2) => {
-			const value = comparator(this.array[i1].time, this.array[i2].time);
-			if (Number.isNaN(value)) {
-				throw new Error(
-					`Comparator should evaluate to a number. Got ${value} when comparing ${this.array[i1].time} with ${this.array[i2].time}`
-				);
-			}
-			return value;
-		};
+/* eslint-disable no-bitwise */
+
+const top = 0;
+const parent = (i) => ((i + 1) >>> 1) - 1;
+const left = (i) => (i << 1) + 1;
+const right = (i) => (i + 1) << 1;
+
+class PriorityQueue {
+	#heap;
+
+	#comparator;
+
+	constructor(comparator = (a, b) => a > b) {
+		this.#heap = [];
+		this.#comparator = comparator;
 	}
 
-	/**
-	 * Insert element
-	 * @param {any} value
-	 */
-	add(value) {
-		this.array.push(value);
-		this.bubbleUp();
-	}
-
-	/**
-	 * Retrieves, but does not remove, the head of this heap
-	 */
-	peek() {
-		return this.array[0];
-	}
-
-	/**
-	 * Retrieves and removes the head of this heap, or returns null if this heap is empty.
-	 */
-	remove(index = 0) {
-		if (!this.size) return null;
-		this.swap(index, this.size - 1); // swap with last
-		const value = this.array.pop(); // remove element
-		this.bubbleDown(index);
-		return value;
-	}
-
-	/**
-	 * Returns the number of elements in this collection.
-	 */
 	get size() {
-		return this.array.length;
+		return this.#heap.length;
 	}
 
-	/**
-	 * Move new element upwards on the heap, if it's out of order
-	 */
-	bubbleUp() {
-		let index = this.size - 1;
-		const parent = (i) => Math.ceil(i / 2 - 1);
-		while (parent(index) >= 0 && this.comparator(parent(index), index) > 0) {
-			this.swap(parent(index), index);
-			index = parent(index);
+	get empty() {
+		return this.size() === 0;
+	}
+
+	get top() {
+		return this.#heap[top];
+	}
+
+	push(...values) {
+		values.forEach((value) => {
+			this.#heap.push(value);
+			this.#siftUp();
+		});
+		return this.size();
+	}
+
+	pop() {
+		const poppedValue = this.peek();
+		const bottom = this.size() - 1;
+		if (bottom > top) {
+			this.#swap(top, bottom);
+		}
+		this.#heap.pop();
+		this.#siftDown();
+		return poppedValue;
+	}
+
+	replace(value) {
+		const replacedValue = this.peek();
+		this.#heap[top] = value;
+		this.#siftDown();
+		return replacedValue;
+	}
+
+	#greater(i, j) {
+		return this.#comparator(this.#heap[i], this.#heap[j]);
+	}
+
+	#swap(i, j) {
+		[this.#heap[i], this.#heap[j]] = [this.#heap[j], this.#heap[i]];
+	}
+
+	#siftUp() {
+		let node = this.size() - 1;
+		while (node > top && this.#greater(node, parent(node))) {
+			this.#swap(node, parent(node));
+			node = parent(node);
 		}
 	}
 
-	/**
-	 * After removal, moves element downwards on the heap, if it's out of order
-	 */
-	bubbleDown(index = 0) {
-		let curr = index;
-		const left = (i) => 2 * i + 1;
-		const right = (i) => 2 * i + 2;
-		const getTopChild = (i) => (right(i) < this.size && this.comparator(left(i), right(i)) > 0 ? right(i) : left(i));
-
-		while (left(curr) < this.size && this.comparator(curr, getTopChild(curr)) > 0) {
-			const next = getTopChild(curr);
-			this.swap(curr, next);
-			curr = next;
+	#siftDown() {
+		let node = top;
+		while (
+			(left(node) < this.size() && this.#greater(left(node), node)) ||
+			(right(node) < this.size() && this.#greater(right(node), node))
+		) {
+			const maxChild = right(node) < this.size() && this.#greater(right(node), left(node)) ? right(node) : left(node);
+			this.#swap(node, maxChild);
+			node = maxChild;
 		}
-	}
-
-	/**
-	 * Swap elements on the heap
-	 * @param {number} i1 index 1
-	 * @param {number} i2 index 2
-	 */
-	swap(i1, i2) {
-		[this.array[i1], this.array[i2]] = [this.array[i2], this.array[i1]];
 	}
 }
 
-// aliases
-Heap.prototype.poll = Heap.prototype.remove;
-Heap.prototype.offer = Heap.prototype.add;
-Heap.prototype.element = Heap.prototype.peek;
-
-module.exports = Heap;
+export default PriorityQueue;
