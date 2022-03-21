@@ -1,12 +1,9 @@
-/* eslint-disable no-bitwise */
-
-/**
- * Courtesy: https://stackoverflow.com/a/42919752/10901858
- */
-
 const top = 0;
+// eslint-disable-next-line no-bitwise
 const parent = (i) => ((i + 1) >>> 1) - 1;
+// eslint-disable-next-line no-bitwise
 const left = (i) => (i << 1) + 1;
+// eslint-disable-next-line no-bitwise
 const right = (i) => (i + 1) << 1;
 
 class PriorityQueue {
