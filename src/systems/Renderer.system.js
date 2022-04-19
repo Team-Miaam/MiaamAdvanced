@@ -1,7 +1,12 @@
 import { System, Query } from 'miaam-ecs';
+import { Container } from 'pixi.js';
 import { Camera, Position, View } from '../components/index.js';
+import GameManager from '../manager/index.js';
+import SingleCamera from './singleCamera.js';
 
 class Renderer extends System {
+	#camera;
+
 	constructor() {
 		super();
 
@@ -19,13 +24,15 @@ class Renderer extends System {
 	}
 
 	update({ delta, components, entities }) {
-		const views = this.queries.views.run({ components, entities });
-		for (let { value: view, done: vDone } = views.next(); !vDone; { value: view, done: vDone } = views.next()) {
-			const cameras = this.queries.camera.run({ components, entities });
-			for (let { value: camera, done } = cameras.next(); !done; { value: camera, done } = cameras.next()) {
-				console.log(delta, view, camera);
-			}
-		}
+		const container = new Container();
+		const views = this.queries.view.run({ components, entities });
+		const cameras = this.queries.camera.run({ components, entities });
+		views.forEach((view) => {
+			cameras.forEach((camera) => {
+				console.log(view, camera);
+			});
+		});
+		// console.log(views, cameras);
 	}
 }
 
