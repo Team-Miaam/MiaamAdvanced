@@ -13,10 +13,10 @@ class SingleCamera {
 
 	#worldHeight;
 
-	constructor({ view, map, cameraWidth, cameraHeight }) {
+	constructor({ view, map, size }) {
 		this.#view = view;
-		this.#width = cameraWidth;
-		this.#height = cameraHeight;
+		this.#width = size.width;
+		this.#height = size.height;
 		const { data: world } = map;
 		this.#worldWidth = world.width * world.tilewidth;
 		this.#worldHeight = world.height * world.tileheight;
@@ -66,22 +66,21 @@ class SingleCamera {
 		return this.y + this.#height / 2 + this.#height / 4;
 	}
 
-	follow(entity) {
-		const { sprite } = entity;
+	follow({ position, size }) {
 		// Check the sprites position in relation to the inner
 		// boundary. Move the camera to follow the sprite if the sprite
 		// strays outside the boundary
-		if (sprite.x < this.leftInnerBoundary) {
-			this.x = sprite.x - this.#width / 4;
+		if (position.x < this.leftInnerBoundary) {
+			this.x = position.x - this.#width / 4;
 		}
-		if (sprite.y < this.topInnerBoundary) {
-			this.y = sprite.y - this.#height / 4;
+		if (position.y < this.topInnerBoundary) {
+			this.y = position.y - this.#height / 4;
 		}
-		if (sprite.x + sprite.width > this.rightInnerBoundary) {
-			this.x = sprite.x + sprite.width - (this.#width / 4) * 3;
+		if (position.x + position.width > this.rightInnerBoundary) {
+			this.x = position.x + size.width - (this.#width / 4) * 3;
 		}
-		if (sprite.y + sprite.height > this.bottomInnerBoundary) {
-			this.y = sprite.y + sprite.height - (this.#height / 4) * 3;
+		if (position.y + position.height > this.bottomInnerBoundary) {
+			this.y = position.y + size.height - (this.#height / 4) * 3;
 		}
 		// If the camera reaches the edge of the map, stop it from moving
 		if (this.x < 0) {
@@ -99,13 +98,12 @@ class SingleCamera {
 	}
 
 	// Use the `centerOver` method to center the camera over a sprite
-	centerOver(entity) {
-		const { sprite } = entity;
-		const halfWidth = sprite.width / 2;
-		const halfHeight = sprite.height / 2;
+	centerOver({ position, size }) {
+		const halfWidth = size.width / 2;
+		const halfHeight = size.height / 2;
 		// Center the camera over a sprite
-		this.x = sprite.x + halfWidth - this.#width / 2;
-		this.y = sprite.y + halfHeight - this.#height / 2;
+		this.x = position.x + halfWidth - this.#width / 2;
+		this.y = position.y + halfHeight - this.#height / 2;
 	}
 }
 
