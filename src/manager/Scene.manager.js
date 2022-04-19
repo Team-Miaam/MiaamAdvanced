@@ -1,3 +1,4 @@
+import { Scene } from 'miaam-ecs';
 import GameManager from './Game.manager.js';
 
 /**
@@ -18,13 +19,7 @@ class SceneManager {
 	 * @private
 	 * @constructor
 	 */
-	constructor() {
-		this.#sharedTicker = GameManager.instance.app.ticker;
-		this.#sharedTicker.add((delta) => {
-			this.#currentScene.update(delta);
-		});
-		this.#sharedTicker.autoStart = false;
-	}
+	constructor() {}
 
 	/**
 	 * @returns {SceneManager}
@@ -37,6 +32,14 @@ class SceneManager {
 	}
 
 	set scene(scene) {
+		if (!this.#currentScene) {
+			this.#sharedTicker = GameManager.instance.app.ticker;
+			this.#sharedTicker.add((delta) => {
+				this.#currentScene.update(delta);
+			});
+			this.#sharedTicker.autoStart = false;
+		}
+
 		this.pause();
 		this.#currentScene = scene;
 		scene.init();
