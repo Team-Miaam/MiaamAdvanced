@@ -12,8 +12,8 @@ class Map extends Entity {
 	init() {
 		const view = new View({ asset: this.#asset });
 		this.addComponent(view);
-		// const world = new World({ asset: this.#asset });
-		// this.addComponent(world);
+		const world = new World({ asset: this.#asset });
+		this.addComponent(world);
 	}
 }
 

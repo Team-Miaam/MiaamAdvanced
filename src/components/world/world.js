@@ -31,8 +31,7 @@ class World extends Component {
 			}
 
 			const renderedLayerComposite = new layerTypeRendererRegistry[layer.type]({
-				name: layer.name,
-				properties,
+				layer,
 			});
 
 			renderedLayerComposite.constructBodies(map);
