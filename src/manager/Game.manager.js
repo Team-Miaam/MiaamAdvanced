@@ -1,4 +1,5 @@
 import { Application } from 'pixi.js';
+import Keyboard from '../input/keyboard/keyboard.js';
 
 import { IntegrationError } from '../error/index.js';
 
@@ -30,6 +31,7 @@ class GameManager {
 				'Cannot instantiate game manager without miaam-lock file. Please load the lock file first'
 			);
 		}
+		Keyboard.bindEventListener(window);
 	}
 
 	/**

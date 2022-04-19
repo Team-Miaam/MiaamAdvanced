@@ -7,8 +7,8 @@ const boxSchema = {
 };
 
 class Box extends Component {
-	constructor({ position: { x, y }, size: { width, height } }) {
-		const body = Bodies.rectangle(x, y, width, height);
+	constructor({ position: { x, y }, size: { width, height }, mass }) {
+		const body = Bodies.rectangle(x, y, width, height, { mass, inertia: 9999 });
 		super({ body });
 	}
 
