@@ -5,3 +5,5 @@ Camera.setSchema({
 	width: { type: PrimitiveTypes.Number },
 	height: { type: PrimitiveTypes.Number },
 });
+
+export default Camera;
