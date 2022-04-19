@@ -1,4 +1,5 @@
 import * as ECS from 'miaam-ecs';
-import { AssetsManager, GameManager } from './src/manager/index.js';
+import * as PIXI from 'pixi.js';
+import { AssetsManager, GameManager, SceneManager } from './src/manager/index.js';
 
-export { GameManager, AssetsManager, ECS };
+export { GameManager, AssetsManager, SceneManager, ECS, PIXI };

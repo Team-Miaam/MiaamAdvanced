@@ -143,8 +143,6 @@ class AssetsManager {
 
 	getResource = (resourcePath) => this.#loader.resources[resourcePath];
 
-	getResourceData = (resourcePath) => this.getResource(resourcePath).data;
-
 	use = (loaderPlugin) => {
 		loaderPlugin.add(this.#loader);
 		this.#middlewares.push(loaderPlugin);
