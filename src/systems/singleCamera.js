@@ -66,7 +66,7 @@ class SingleCamera {
 		return this.y + this.#height / 2 + this.#height / 4;
 	}
 
-	follow({ position, size }) {
+	follow(position, size) {
 		// Check the sprites position in relation to the inner
 		// boundary. Move the camera to follow the sprite if the sprite
 		// strays outside the boundary
@@ -76,10 +76,10 @@ class SingleCamera {
 		if (position.y < this.topInnerBoundary) {
 			this.y = position.y - this.#height / 4;
 		}
-		if (position.x + position.width > this.rightInnerBoundary) {
+		if (position.x + size.width > this.rightInnerBoundary) {
 			this.x = position.x + size.width - (this.#width / 4) * 3;
 		}
-		if (position.y + position.height > this.bottomInnerBoundary) {
+		if (position.y + size.height > this.bottomInnerBoundary) {
 			this.y = position.y + size.height - (this.#height / 4) * 3;
 		}
 		// If the camera reaches the edge of the map, stop it from moving

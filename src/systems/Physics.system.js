@@ -43,7 +43,6 @@ class PhysicsSystem extends System {
 			const box = entity[Box.name];
 			const position = entity[Position.name];
 			position.update(box.position);
-			console.log(box.position);
 		});
 	}
 }

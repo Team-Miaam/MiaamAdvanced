@@ -57,7 +57,7 @@ class Renderer extends System {
 		const cameraComp = this.queries.camera.run({ components, entities })[0];
 		const position = cameraComp[Position.name].props;
 		const size = cameraComp[Size.name].props;
-		this.#camera.follow({ position, size });
+		this.#camera.follow(position, size);
 
 		const sprites = this.queries.sprite.run({ components, entities });
 		sprites.forEach((entity) => {
