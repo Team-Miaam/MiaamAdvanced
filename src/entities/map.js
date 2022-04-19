@@ -1,5 +1,5 @@
 import { Entity } from 'miaam-ecs';
-import { View } from '../components/index.js';
+import { View, World } from '../components/index.js';
 
 class Map extends Entity {
 	#asset;
@@ -12,6 +12,8 @@ class Map extends Entity {
 	init() {
 		const view = new View({ asset: this.#asset });
 		this.addComponent(view);
+		// const world = new World({ asset: this.#asset });
+		// this.addComponent(world);
 	}
 }
 
