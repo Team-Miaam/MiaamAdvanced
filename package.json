@@ -1,6 +1,6 @@
 {
 	"name": "miaam",
-	"version": "2.0.5",
+	"version": "2.1.0",
 	"description": "Miaam Web Game Framework",
 	"scripts": {
 		"format": "prettier --write .",
@@ -50,7 +50,7 @@
 	"dependencies": {
 		"matter-js": "^0.18.0",
 		"miaam-assets": "^0.2.9",
-		"miaam-ecs": "^2.0.2",
+		"miaam-ecs": "^2.1.0",
 		"pixi.js": "^6.2.2"
 	}
 }
