@@ -1,6 +1,6 @@
 {
 	"name": "miaam",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"description": "Miaam Web Game Framework",
 	"scripts": {
 		"format": "prettier --write .",
