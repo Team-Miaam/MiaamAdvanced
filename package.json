@@ -48,6 +48,7 @@
 		"webpack-cli": "^4.9.1"
 	},
 	"dependencies": {
+		"@pixi/sound": "^4.2.0",
 		"matter-js": "^0.18.0",
 		"miaam-assets": "^0.2.9",
 		"miaam-ecs": "^2.1.0",
