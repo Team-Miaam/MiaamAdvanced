@@ -1,5 +1,7 @@
 import { Scene } from 'miaam-ecs';
+import { TilingSprite } from 'pixi.js';
 import GameManager from './Game.manager.js';
+import PhysicsManager from './Physics.manager.js';
 
 /**
  * @public
@@ -41,8 +43,11 @@ class SceneManager {
 		}
 
 		this.pause();
+		GameManager.instance.clearStage();
+		PhysicsManager.instance.reset();
 		this.#currentScene = scene;
 		scene.init();
+		this.start();
 	}
 
 	start() {

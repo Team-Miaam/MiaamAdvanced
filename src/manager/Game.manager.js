@@ -65,6 +65,14 @@ class GameManager {
 	get window() {
 		return this.#app.view;
 	}
+
+	clearStage() {
+		const { stage } = this.#app;
+
+		for (let i = stage.children.length - 1; i >= 0; i -= 1) {
+			stage.removeChild(stage.children[i]);
+		}
+	}
 }
 
 export default {
